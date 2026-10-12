@@ -126,6 +126,27 @@
         </div>
       </div>
 
+      <div class="st-card usage-card" id="usage-card" hidden>
+        <div class="req-head"><span class="card-title">Tokens generated</span>
+          <span class="muted small" id="usage-sum"></span></div>
+        <div class="usage-grid">
+          <div class="usage-total-box">
+            <span class="usage-total" id="usage-total">&ndash;</span>
+            <span class="muted small" id="usage-total-sub"></span>
+          </div>
+          <dl class="facts" id="usage-facts"></dl>
+        </div>
+        <div class="table-wrap" id="usage-days-wrap" hidden>
+          <table class="st-table">
+            <thead><tr><th>Day</th><th class="num">Requests</th><th class="num">Output</th><th class="num">Thinking</th>
+              <th class="num">Answer</th><th class="num">Prompt read</th><th class="num">Reused</th>
+              <th class="num" title="Tokens the engine says it decoded, including the ones a speculative step re-did">Engine decoded</th></tr></thead>
+            <tbody id="usage-days-body"></tbody>
+          </table>
+        </div>
+        <p class="muted small usage-note" id="usage-note"></p>
+      </div>
+
       <div class="st-card cc-card" id="cc-card">
         <div class="req-head"><span class="card-title">Conversation cache</span><span class="muted small" id="cc-sum"></span></div>
         <div class="cc-bars" id="cc-bars" hidden>

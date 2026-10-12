@@ -2840,6 +2840,10 @@ class Service:
         self.totals = {"since": time.time(), "requests": 0, "prompt_tokens": 0, "reused": 0, "output_tokens": 0,
                        "prompt_ms": 0.0, "decode_ms": 0.0,
                        "drafts_offered": 0, "drafts_accepted": 0}   # #457: the MTP drafts, summed where reported
+        # these totals live in memory and start at 0 with every start of the server.  The count of everything this
+        # model has ever written is serve/usage.py's ledger: serve() opens it when "usage_log" is on, so with it off
+        # (the default) no file is made and /metrics carries no "usage" key at all
+        self.usage = None
         self.last_timings = None                         # the last finished request's, llama.cpp's names (/v1/status)
         from serve.prometheus import Latencies
         self.latencies = Latencies()                     # GET /metrics in Prometheus text: the latency histograms
@@ -3321,9 +3325,12 @@ class Service:
                   **dict(getattr(self.engine, "info", {}) or {})}
         tel = self.telemetry.snapshot() if getattr(self, "telemetry", None) else {"now": {}, "history": {}, "static": {}}
         parked = self.conv_log.poll(getattr(self.engine, "log_path", None), getattr(self.engine, "log_start", None))
+        # the token ledger (serve/usage.py): everything this model has ever written, read from its own file.  Absent
+        # from the answer when "usage_log" is off (the default), so a server that never turned it on answers as before
+        usage = {"usage": self.usage.view()} if self.usage is not None else {}
         return {"engine": engine, "live": live, "requests": hist[::-1][:None if all_requests else 12],
                 "conversation_cache": conversation_cache_view(engine, hist, totals, parked),
-                "requests_kept": len(hist), "totals": totals, "hardware": tel["now"],
+                "requests_kept": len(hist), "totals": totals, **usage, "hardware": tel["now"],
                 "hardware_static":
                 tel["static"], "history": tel["history"], "time": now}
 
@@ -3728,6 +3735,7 @@ class Service:
         # one arrived.  A reasoning-budget continuation is another native generation, not another API request,
         # so the generated reasoning must not become this request's cached input (#615).
         segments = []
+        usage_line = None                             # this request's token ledger line, made in the settle below
         trace = getattr(self.request_trace, "record", None)
         waiting = time.perf_counter()
         # #465: with "parallel" (the engine's batch slots) requests run at once: each keeps its own status and rate
@@ -4066,6 +4074,19 @@ class Service:
                             t["decode_ms"] += last.get("decode_ms") or 0.0
                             t["drafts_offered"] += last.get("drafts_offered") or 0
                             t["drafts_accepted"] += last.get("drafts_accepted") or 0
+                            if self.usage is not None:      # the ledger's line for this request, written below, after
+                                usage_line = {             # the lock is released (serve/usage.py): the counts outlive
+                                    "t": started,          # the server, unlike the totals above
+                                    "model": self.model,   # the served model, aliases folded into it
+                                    "api": getattr(self.request_trace, "api", None),  # which door it came in at
+                                    "finish": finish,
+                                    "output": n,           # completion tokens the client got: what an API bills
+                                    "reasoning": thinking_n,       # of those, the ones written while thinking
+                                    "prompt": seen, "reused": last.get("reused") or 0,
+                                    "engine_generated": last.get("generated") or 0,  # what the engine says it decoded
+                                    "drafts_offered": last.get("drafts_offered") or 0,
+                                    "drafts_accepted": last.get("drafts_accepted") or 0,
+                                    "decode_ms": round(last.get("decode_ms") or 0.0, 1)}
                             ft0 = st.get("first_token")             # this request's own (#465: one per request)
                             self.latencies.observe(ft0 - started if ft0 else None, n,
                                                    (last.get("decode_ms") or 0.0) / 1000, time.time() - started)
@@ -4100,6 +4121,8 @@ class Service:
                                 self.status.update(busy=False)
                                 self.status.pop("tail", None)
                                 self.status.pop("tool", None)
+                    if usage_line is not None:              # the ledger write outside the status lock: a disk that
+                        self.usage.record(usage_line)       # hiccups must not hold up GET /status and the Monitor
         finally:
             if emb:
                 Path(emb).unlink(missing_ok=True)
@@ -5067,6 +5090,7 @@ def make_handler(svc: Service):
                         self._json(503, {"error": {"type": "server_error", "message": str(e)}})
                     return
                 if path in ("/v1/chat/completions", "/v1/messages", "/v1/responses"):
+                    svc.request_trace.api = path      # which door: the token ledger's "api" (serve/usage.py)
                     self.record = svc.begin_request(path, req)
                 if path == "/v1/responses":
                     self._responses(req)
@@ -6167,6 +6191,11 @@ def main() -> int:
     ap.add_argument("--api-monitor", action="store_true",
                     help="the API request monitor at /api-monitor: keeps the last 100 requests' prompts and answers in "
                          "memory (also \"api_monitor\": true in the config; off by default)")
+    ap.add_argument("--usage-log", action="store_true",
+                    help="count every finished request's tokens into <the config's name>.usage.jsonl beside the run "
+                         "config, so the total of what this model has written outlives a restart of the server (the "
+                         "Monitor tab's \"Tokens generated\" card; also \"usage_log\": true in the config; off by "
+                         "default)")
     ap.add_argument("--idle-unload", type=float, default=None, metavar="SECONDS",
                     help="unload the model after this many seconds without requests, so other programs (games, other "
                          "model servers) can use the VRAM; the next request loads it again (also \"idle_unload_s\" "
@@ -6327,6 +6356,16 @@ def main() -> int:
     if svc.api_monitor:
         print("[strata] API request monitor on (/api-monitor): the last 100 requests' prompts and answers are kept in "
               "memory" + ("" if svc.api_key else "; anyone who can reach this server can read them (no API key)"),
+              flush=True)
+    if a.usage_log or cfg.get("usage_log") is True:       # the token counter that outlives a restart (serve/usage.py)
+        from serve import usage as usage_mod
+        svc.usage = usage_mod.UsageLedger(usage_mod.ledger_path(a.config, ROOT))
+        life = svc.usage.lifetime
+        print("[strata] token ledger on: every finished request is counted into "
+              + str(svc.usage.path)
+              + (f" - read back {life['output']:,} output tokens of {life['requests']:,} requests, since "
+                 f"{time.strftime('%Y-%m-%d', time.localtime(svc.usage.since))}"
+                 if life["requests"] else " - the ledger is empty: the counts start with the first request"),
               flush=True)
     if svc.cors_origins:
         print(f"[strata] CORS on /v1/* for {', '.join(svc.cors_origins)}"

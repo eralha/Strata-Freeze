@@ -192,6 +192,7 @@ function render(m) {
   if (live.queued > 0) setPill("queued", `${live.queued} queued`);
   if (tab === "monitor") renderMonitor(live, hw, st, eng, h, last, m.requests || [], m.totals, m.requests_kept);
   if (tab === "monitor") renderConvCache(m.conversation_cache);
+  if (tab === "monitor") renderUsage(m.usage);
   if (tab === "about") renderAbout(eng, hw, st);
 }
 
@@ -226,6 +227,43 @@ function renderConvCache(c) {
   $("cc-note").textContent = c.enabled
     ? "A request that continues a parked conversation gets its state back instead of reading it again; the oldest goes when the slots or the memory are full."
     : "The engine keeps the last conversation's state, so a follow-up reads only what is new. To keep several conversations (agents taking turns), add \"--conversation-cache-mib\", \"8192\" to the run config's args (docs/DETAILS.md).";
+}
+
+// the token ledger (serve/usage.py): what this model has written, over every start of the server - /metrics' own
+// totals start at 0 each time, so this is the "how much has it produced for me in total" card
+function dayLabel(d) {
+  const day = new Date(`${d}T12:00:00`), now = new Date();
+  const n = Math.round((new Date(now.getFullYear(), now.getMonth(), now.getDate()) - day) / 86400000);
+  return n === 0 ? "Today" : n === 1 ? "Yesterday" : day.toLocaleDateString([], {weekday: "short", month: "short", day: "numeric"});
+}
+function renderUsage(u) {
+  $("usage-card").hidden = !u;
+  if (!u) return;
+  const l = u.lifetime, t = u.today, read = l.prompt - l.reused;
+  $("usage-total").textContent = fmt(l.output);
+  $("usage-total-sub").textContent = l.since
+    ? `output tokens, since ${new Date(l.since * 1000).toLocaleDateString([], {year: "numeric", month: "short", day: "numeric"})}`
+    : "output tokens; no request has finished yet";
+  $("usage-sum").textContent = l.requests ? `${fmt(t.output)} today · ${fmt(l.requests)} requests` : "";
+  facts($("usage-facts"), [
+    ["Written today", t.requests ? `${fmt(t.output)} tokens (${fmt(t.reasoning)} thinking, ${fmt(t.answer)} answer)` : null],
+    ["The total, split", l.requests ? `${fmt(l.reasoning)} thinking · ${fmt(l.answer)} answer` : null],
+    ["Prompt", l.requests ? `${fmt(read)} read · ${fmt(l.reused)} reused` : null],
+    ["Engine decoded", l.requests ? `${fmt(l.engine_generated)} tokens` : null],
+    ["Speculative drafts", l.drafts_offered ? `${fmt(l.drafts_accepted)} of ${fmt(l.drafts_offered)} accepted` : null],
+    ["Writing speed, average", l.decode_ms > 0 && l.output > 0 ? `${fmt(l.output / (l.decode_ms / 1000), 1)} tok/s` : null],
+    ["By model", (u.models || []).length > 1 ? u.models.map((m) => `${m.model}: ${fmt(m.output)}`).join(" · ") : null],
+  ]);
+  const days = (u.days || []).slice().reverse().filter((d) => d.requests);
+  $("usage-days-wrap").hidden = days.length < 2;          // one day of requests is the card's own figures already
+  $("usage-days-body").innerHTML = days.map((d) => `<tr><td>${esc(dayLabel(d.day))}</td><td class="num">${fmt(d.requests)}</td>
+    <td class="num">${fmt(d.output)}</td><td class="num">${fmt(d.reasoning)}</td><td class="num">${fmt(d.answer)}</td>
+    <td class="num">${fmt(d.prompt - d.reused)}</td><td class="num">${fmt(d.reused)}</td>
+    <td class="num">${fmt(d.engine_generated)}</td></tr>`).join("");
+  $("usage-note").textContent = u.broken
+    ? `The ledger stopped writing: ${u.broken}. The figures above are what was recorded up to there.`
+    : `One line per finished request in ${u.file}. The big number counts what the client received (thinking included); ` +
+      `"Engine decoded" is what the engine says it wrote, re-done speculative tokens included. Delete the file to start over.`;
 }
 
 function renderTotals(t) {

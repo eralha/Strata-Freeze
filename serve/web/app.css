@@ -126,6 +126,16 @@ main { flex: 1; min-height: 0; display: flex; }
 .cc-bars[hidden] { display: none; }
 .cc-note { margin: 0; }
 .cc-note:empty { display: none; }
+/* Tokens generated: the lifetime count of what this model has written (serve/usage.py's ledger) */
+.usage-card { display: flex; flex-direction: column; gap: var(--st-s-3); }
+.usage-grid { display: grid; grid-template-columns: minmax(150px, max-content) minmax(0, 1fr);
+              gap: var(--st-s-3) var(--st-s-6); align-items: center; }
+.usage-total-box { display: flex; flex-direction: column; gap: var(--st-s-1); }
+.usage-total { font-weight: var(--st-fw-black); font-size: var(--st-fs-display); line-height: 1.05;
+               font-variant-numeric: tabular-nums; letter-spacing: -1px; }
+.usage-days[hidden] { display: none; }
+.usage-note { margin: 0; }
+.usage-note:empty { display: none; }
 .mcp-card { display: flex; flex-direction: column; gap: var(--st-s-3); }
 .cfg-form { display: grid; grid-template-columns: minmax(180px, max-content) minmax(0, 1fr); gap: var(--st-s-3) var(--st-s-4);
             align-items: center; }
@@ -173,6 +183,7 @@ main { flex: 1; min-height: 0; display: flex; }
   .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .monitor-row { grid-template-columns: 1fr; }
   .cc-bars { grid-template-columns: 1fr; }
+  .usage-grid { grid-template-columns: 1fr; }
   .cfg-form { grid-template-columns: 1fr; gap: 4px; }
   .cfg-form .st-input { margin-bottom: var(--st-s-2); }
 }

@@ -678,6 +678,11 @@ so a Monitor-tab panel and a Grafana panel read the same value: `strata:live_sta
 `gpu`), `strata:cpu`, `strata:ram_used_bytes`, `strata:ram_total_bytes`. A value the server does not have (no GPU
 telemetry, an older engine) has no sample rather than a zero.
 
+The JSON's `"totals"` are the running process's: they start at 0 with every start of the server. With
+`"usage_log": true` the JSON also has `"usage"` - the token counts of the ledger file, so the lifetime total, today
+and the last 7 days survive a restart ([Tokens generated](#tokens-generated-the-usage-ledger)). Without the switch
+the key is absent, and the JSON is what it always was.
+
 Ready to use, in `docs/monitoring/`: `prometheus.yml` (a scrape config, the API key as a bearer token),
 `servicemonitor.yaml` (the same for the Prometheus Operator) and `grafana-strata.json`, a Grafana dashboard to
 import (it asks for the Prometheus data source): requests running and waiting, tokens per second, time to first
@@ -1937,6 +1942,45 @@ with **262,144 characters per input/output/reasoning/response field** and visibl
 responses are unaffected. Headers are not recorded, and the monitor key is kept in this tab's session storage.
 Treat request history as sensitive input/output when exposing Strata on a network: set an API key as above.
 The page uses relative URLs and works through the existing host binding or a reverse proxy.
+
+### Tokens generated (the usage ledger)
+
+The Monitor tab's totals and `GET /metrics`' `totals` are summed in memory: they answer "what has this run of the
+server done" and start again at 0 with every start. The **Tokens generated** card answers the other question - what
+this model has written in total - from a ledger file that outlives the server.
+
+Off by default: turn it on with `"usage_log": true` in `strata-<model>.json` (the page's About > Model settings
+lists it) or `serve/server.py --usage-log`. With it off, no file is made, `GET /metrics` has no `usage` key and the
+card stays hidden; nothing else changes. The server reads the config when it starts, so the switch takes effect from
+the next start.
+
+Each **finished** request appends one JSON line to `<the config's name>.usage.jsonl` beside the run config -
+`strata-swift-iq3_s.json` counts into `strata-swift-iq3_s.usage.jsonl`, next to that model's own log - so each model
+has a count of its own and a server started without a config writes `strata-usage.jsonl` in the project folder. The
+line names the request's time, model, which API it came in at, how it ended, and its counts:
+
+```
+{"t":1763000000.12,"model":"swift-iq3_s","api":"/v1/chat/completions","finish":"stop","output":512,"reasoning":300,
+ "prompt":4096,"reused":2048,"engine_generated":560,"drafts_offered":90,"drafts_accepted":60,"decode_ms":5120.0}
+```
+
+`output` is the completion tokens the client received - the same `completion_tokens` the API answered with, and the
+figure that answers "how many tokens did it write for me" (what an API would have billed, thinking included: the card
+splits the thinking from the answer, and no prices are kept here). `engine_generated` is what the engine's own DONE
+line says it decoded, re-done speculative tokens included: the hardware's figure, and usually the higher of the two.
+
+The card shows the lifetime total, today's, and the last 7 days as rows; `GET /metrics` carries the same under
+`"usage"` (with the file's path), so a script reads it too. Measured on a Windows RTX 5070 PC: a line is 231 bytes,
+writing it at the end of a request costs 0.25 ms (one open-append-close per record, 500 records), and a ledger of
+50,000 requests (11.6 MB) is read back at start in 0.36 s. The write happens after the request is settled, outside
+the status lock, and a disk that says no (full, a deleted folder) ends the ledger with one printed line and leaves
+the server answering - the in-screen figures keep what was recorded. A ledger cut mid-write (a kill) loses that one
+line: the next start drops it and writes the next request on a fresh line. The file is plain JSON lines: read it with
+any tool, and delete it to start the count over.
+
+A request that ends before it runs (a 400, a 409, a prompt that does not fit) is not a generation and writes nothing.
+A request is one line even when a thinking budget sent its prompt twice (#123), and a cancelled one is counted as far
+as it got - exactly the shape `GET /metrics`' `totals` and the request rows have.
 
 ### Prompt buffers: `bo` shares `emb` (#1454)
 
