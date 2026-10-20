@@ -172,7 +172,24 @@ LLAMA_CPP_ZIP = f"https://github.com/ggml-org/llama.cpp/archive/{LLAMA_CPP_COMMI
 # "https://github.com/<you>/Strata/releases/latest/download/" (or pass --prebuilt / set STRATA_PREBUILT_URL).
 # With the default, the release of this checkout's own version (PREBUILT_TAG_URL, CMakeLists.txt's version) is
 # tried first and the latest release is the fallback (#214): an older checkout keeps the engine it shipped with.
-PREBUILT_URL = "https://github.com/Niko1221/Strata/releases/latest/download/"
+# FREEZE (0.1.45): pinned to this version's own release, so the "latest" fallback is never a path.  Upstream's
+# v0.2.0-beta (2026-10-19) publishes strata-engine-*.tar.gz / Strata-*.AppImage / Strata-*-windows-*.exe and no
+# strata-windows-x64.zip, so pointing at "latest" would 404 here and setup would fall back to compiling.  An
+# un-pinned checkout of upstream main is what you want on a moving install; this one is a freeze.  A clone with
+# the engine already in engine/ never downloads at all (MIN_ENGINE is met), so this only matters for a fresh one.
+# Keep "--prebuilt <local folder>" (STRATA_PREBUILT_URL) as the offline way in: freeze/FREEZE.md has the command.
+PREBUILT_URL = "https://github.com/Niko1221/Strata/releases/download/v0.1.45/"
+# The engine archives of this release, pinned by release tag and asset name, with their size and SHA-256 (read from
+# GitHub's releases API on 2026-10-20, and confirmed by hashing the downloaded strata-windows-x64.zip here).
+# `verify_engine_archive` prefers these over asking the API, so a frozen checkout is checked against bytes chosen on
+# purpose rather than against whatever a network happens to say that day; a tag that is not listed keeps the old
+# behaviour (ask the API, and no answer warns and installs).  The release carries Windows assets only - a Linux
+# install of this version compiles the engine (docs/INSTALL.md), so there is nothing to pin there.
+PINNED_ENGINE_SHA256 = {
+    ("0.1.45", "strata-windows-x64.zip"): (165243142, "a1d4cafb8319c253f3010ff118dbd5ed07c232056b939ac7735819559f3b859e"),
+    ("0.1.45", "strata-windows-x64-cuda12.zip"): (242782835, "19c1677fbefac9370d1f9556bacbd9b2e2b5d2661e0d8568e0e3e47a07641574"),
+    ("0.1.45", "strata-windows-x64-hip.zip"): (643211025, "75a2ff9c71a48b4c4c54f6e37a42543c0d6ff11f109360d5e6fedd7733db53a9"),
+}
 # The repository the release assets and their SHA-256 come from; `engine_digest` reads the API here even
 # when --prebuilt points the download somewhere else, because the hash is only worth having if it comes
 # from somewhere the download does not.
@@ -3386,6 +3403,24 @@ def is_local(base: str) -> bool:
     return not re.match(r"^[a-z][a-z0-9+.\-]*://", b, re.I)
 
 
+def pinned_engine_digest(asset: str, base: str) -> tuple[int, str] | None:
+    """(size, "sha256-hex") committed for the release `base` names, or None when this file pins nothing there.
+
+    A hash in this file is stronger than a hash asked of the API over the same network the bytes come over,
+    and it works with no network at all - which is what a frozen checkout needs: `PREBUILT_URL` names one
+    release, `PINNED_ENGINE_SHA256` names its bytes, and nothing is left to a later day's releases page.
+
+    Only a URL that names its release is consulted, so a checkout that tracks upstream (the `latest` URL)
+    keeps asking the API, as before: pinning the newest release of a moving install would be a lie the day a
+    release appears.  The size is part of the pair for the same reason `engine_digest` returns it.
+    """
+    where = release_of(base)
+    if where is None or not where[1]:               # a local folder, a plain mirror, or the "latest" URL
+        return None
+    entry = PINNED_ENGINE_SHA256.get((where[1], asset))
+    return (int(entry[0]), entry[1]) if entry else None
+
+
 def engine_digest(asset: str, base: str) -> tuple[int, str] | None:
     """(size, "sha256:<hex>") for `asset` in the release `base` points at, or None if GitHub will not say.
 
@@ -3460,7 +3495,10 @@ def verify_engine_archive(z: Path, asset: str, base: str) -> None:
         warn(f"STRATA_SKIP_SHA256=1: NOT checking {asset} against its SHA-256. If the file is corrupt or "
              f"tampered with, it will be installed anyway. Unset it to get the check back.")
         return
-    want = engine_digest(asset, base)          # one API call: this is a rate-limited API
+    want = pinned_engine_digest(asset, base)  # a hash committed next to the URL beats one asked over the wire
+    src = "this file's PINNED_ENGINE_SHA256"
+    if want is None:
+        want, src = engine_digest(asset, base), "GitHub's"   # one API call: this is a rate-limited API
     if not want:
         # no published digest (offline, rate limit, a mirror or folder): install anyway, never refuse
         warn(f"could not get a SHA-256 for {asset} from GitHub (offline, rate limited, or not a release "
@@ -3482,7 +3520,7 @@ def verify_engine_archive(z: Path, asset: str, base: str) -> None:
         got = h.hexdigest()
         drop_download(z)
         raise UnverifiedEngine(f"{z.name} has the wrong SHA-256 ({got}, expected {sha})")
-    ok(f"{z.name}: SHA-256 checksum verified against GitHub's ({sha[:12]}...)")
+    ok(f"{z.name}: SHA-256 checksum verified against {src} ({sha[:12]}...)")
 
 
 def engine_refused(asset: str, e: Exception, updating: bool) -> None:

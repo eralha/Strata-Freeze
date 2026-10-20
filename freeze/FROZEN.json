@@ -1,0 +1,497 @@
+{
+ "captured_at": "2026-10-20T07:38:12.804251+00:00",
+ "frozen_version": "0.1.45",
+ "frozen_tag": "v0.1.45",
+ "upstream_repo": "Niko1221/Strata",
+ "git": {
+  "head": "25c3cfad95e44ee6e419b2730a2f99e3dbfe40c7",
+  "describe": "v0.1.45-4-g25c3cfad-dirty",
+  "tag_commit": "477ac13cbe8e582c20484871ce459d20d82df09d",
+  "commits_after_tag": "4",
+  "branch": "token_counter",
+  "remotes": "origin\thttps://github.com/Niko1221/Strata.git (fetch)\norigin\thttps://github.com/Niko1221/Strata.git (push)",
+  "clean": false
+ },
+ "machine": {
+  "os": "Windows 11",
+  "machine_root": "C:\\dev\\Strata",
+  "python": "3.13.15 (tags/v3.13.15:4061bc4, Aug  5 2026, 13:05:39) [MSC v.1944 64 bit (AMD64)]",
+  "python_exe": "C:\\dev\\Strata\\.venv\\Scripts\\python.exe"
+ },
+ "setup_constants": {
+  "setup_py_sha256": "82396d16df6a268ba6504478d5f584c6a2609ae77e833ab787e5ea26141736d6",
+  "PREBUILT_URL": "https://github.com/Niko1221/Strata/releases/download/v0.1.45/",
+  "PREBUILT_TAG_URL": "https://github.com/Niko1221/Strata/releases/download/v{version}/",
+  "REPO": "Niko1221/Strata",
+  "PREBUILT_ASSET": "strata-windows-x64.zip",
+  "CUDA12_ASSET": "strata-windows-x64-cuda12.zip",
+  "WIN_HIP_ASSET": "strata-windows-x64-hip.zip",
+  "MIN_ENGINE": [
+   0,
+   1,
+   45
+  ],
+  "CUDA_WHEELS": [
+   "nvidia-cublas==13.0.2.14",
+   "nvidia-cuda-runtime==13.0.96"
+  ],
+  "CUDA12_WHEELS": [
+   "nvidia-cublas-cu12==12.9.1.4",
+   "nvidia-cuda-runtime-cu12==12.9.79"
+  ],
+  "LLAMA_CPP_COMMIT": "3cf03257f219afbe7334045ff7c6a06ac68c627d",
+  "HF_REVISIONS": {
+   "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF": "ed59f92082b1e93c0e96d60a8b11aab089b52f09",
+   "ukisai/Swift-1.5-Qwen3.8-Flash-Next-GSQ-RCO-GGUF": "b22d729eae29b5796f76fb70f91aef549b9fc52c",
+   "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF": "5348543e0147355ac9cbcb031184a3546350988e",
+   "unsloth/Qwen3.8-Flash-Next-GGUF": "38bb39ee97821de2c9009abb7e93950eec396e66",
+   "unsloth/Qwen3.6-35B-A3B-MTP-GGUF": "5bc3e238d916f48a861bac2f8a1990a0e9b7e98d"
+  },
+  "PINNED_ENGINE_SHA256": {
+   "0.1.45|strata-windows-x64.zip": [
+    165243142,
+    "a1d4cafb8319c253f3010ff118dbd5ed07c232056b939ac7735819559f3b859e"
+   ],
+   "0.1.45|strata-windows-x64-cuda12.zip": [
+    242782835,
+    "19c1677fbefac9370d1f9556bacbd9b2e2b5d2661e0d8568e0e3e47a07641574"
+   ],
+   "0.1.45|strata-windows-x64-hip.zip": [
+    643211025,
+    "75a2ff9c71a48b4c4c54f6e37a42543c0d6ff11f109360d5e6fedd7733db53a9"
+   ]
+  },
+  "PY_PACKAGES": [
+   "numpy",
+   "jinja2",
+   "regex",
+   "pyyaml",
+   "tqdm",
+   "requests",
+   "cmake",
+   "ninja",
+   "pillow",
+   "psutil"
+  ],
+  "requirements_sha256": "8d25b0f617bcc128ebd1bb6a0a69fccd1e260ee1310887beaabe2a3264859f36"
+ },
+ "engine_local_mirror": {
+  "dir": "C:\\dev\\Strata-engine-dist",
+  "zips": {
+   "strata-windows-x64.zip": {
+    "path": "C:\\dev\\Strata-engine-dist\\strata-windows-x64.zip",
+    "size": 165243142,
+    "sha256": "a1d4cafb8319c253f3010ff118dbd5ed07c232056b939ac7735819559f3b859e"
+   }
+  }
+ },
+ "engine_installed": {
+  "dir": "C:\\dev\\Strata\\engine",
+  "present": true,
+  "BUILD.json": {
+   "version": "0.1.45",
+   "source": "release",
+   "archs": [
+    75,
+    86,
+    89,
+    120
+   ],
+   "ptx": true,
+   "cuda": "13.0",
+   "vision": "gpu",
+   "portable": true
+  },
+  "files": {
+   "BUILD.json": {
+    "size": 154,
+    "mtime": "2026-10-17T12:21:58.132259+00:00"
+   },
+   "strata-vision.exe": {
+    "size": 108171264,
+    "mtime": "2026-10-17T12:21:58.131258+00:00"
+   },
+   "strata.exe": {
+    "size": 214625280,
+    "mtime": "2026-10-17T12:21:57.881224+00:00"
+   },
+   "strata_kq.dll": {
+    "size": 34449920,
+    "mtime": "2026-10-17T12:21:57.956231+00:00"
+   }
+  },
+  "previous_engine_present": true
+ },
+ "pip": {
+  "requirements_sha256": "8d25b0f617bcc128ebd1bb6a0a69fccd1e260ee1310887beaabe2a3264859f36",
+  "requirements": [
+   "numpy==2.5.3; python_version >= \"3.12\"",
+   "numpy==2.4.6; python_version == \"3.11\"",
+   "numpy==2.2.6; python_version < \"3.11\"",
+   "jinja2==3.1.6",
+   "regex==2026.9.10",
+   "pyyaml==6.0.3",
+   "tqdm==4.70.1",
+   "requests==2.34.2",
+   "cmake==4.4.3",
+   "ninja==1.13.2",
+   "pillow==12.3.0",
+   "psutil==7.2.2",
+   "markupsafe==3.0.3",
+   "certifi==2026.7.22",
+   "charset-normalizer==3.5.1",
+   "idna==3.20",
+   "urllib3==2.8.0",
+   "colorama==0.4.6; sys_platform == \"win32\""
+  ],
+  "setup_pip_stamp": [
+   "certifi==2026.7.22",
+   "charset-normalizer==3.5.1",
+   "cmake==4.4.3",
+   "colorama==0.4.6; sys_platform == \"win32\"",
+   "idna==3.20",
+   "jinja2==3.1.6",
+   "markupsafe==3.0.3",
+   "ninja==1.13.2",
+   "numpy==2.2.6; python_version < \"3.11\"",
+   "numpy==2.4.6; python_version == \"3.11\"",
+   "numpy==2.5.3; python_version >= \"3.12\"",
+   "nvidia-cublas==13.0.2.14",
+   "nvidia-cuda-runtime==13.0.96",
+   "pillow==12.3.0",
+   "psutil==7.2.2",
+   "pyyaml==6.0.3",
+   "regex==2026.9.10",
+   "requests==2.34.2",
+   "tqdm==4.70.1",
+   "urllib3==2.8.0"
+  ],
+  "setup_pip_stamp_path": "C:\\dev\\Strata\\.venv\\.strata-pip.json",
+  "pip_freeze": [
+   "certifi==2026.7.22",
+   "charset-normalizer==3.5.1",
+   "cmake==4.4.3",
+   "colorama==0.4.6",
+   "idna==3.20",
+   "Jinja2==3.1.6",
+   "MarkupSafe==3.0.3",
+   "ninja==1.13.2",
+   "numpy==2.5.3",
+   "nvidia-cublas==13.0.2.14",
+   "nvidia-cuda-runtime==13.0.96",
+   "pillow==12.3.0",
+   "psutil==7.2.2",
+   "PyYAML==6.0.3",
+   "regex==2026.9.10",
+   "requests==2.34.2",
+   "tqdm==4.70.1",
+   "urllib3==2.8.0"
+  ]
+ },
+ "settings_files": {
+  "data/expert-profile-coder.bin": {
+   "path": "C:\\dev\\Strata\\data\\expert-profile-coder.bin",
+   "size": 98328,
+   "sha256": "a514661124d5305effe9c1bcecff7dc069af398b2b19ff9d11628a2cad0a8915"
+  },
+  "data/expert-profile-sycl.bin": {
+   "path": "C:\\dev\\Strata\\data\\expert-profile-sycl.bin",
+   "size": 196632,
+   "sha256": "ddddf9b361dd1cb1e68ef8d130759fa15da3b84d74f21d37b28f377493b80bbc"
+  },
+  "data/expert-profile.bin": {
+   "path": "C:\\dev\\Strata\\data\\expert-profile.bin",
+   "size": 196632,
+   "sha256": "8f59b4aa8873209dff11c11e37bcda9529a1335b724a1afeea37bf6388975baf"
+  },
+  "requirements.txt": {
+   "path": "C:\\dev\\Strata\\requirements.txt",
+   "size": 711,
+   "sha256": "8d25b0f617bcc128ebd1bb6a0a69fccd1e260ee1310887beaabe2a3264859f36"
+  },
+  "run-swift-iq3_s.bat": {
+   "path": "C:\\dev\\Strata\\run-swift-iq3_s.bat",
+   "size": 263,
+   "sha256": "fd2082de81ae8d600944347d551c95f1490fceb391bb5be4a84e5dcc2399afb0"
+  },
+  "strata-swift-iq3_s.json": {
+   "path": "C:\\dev\\Strata\\strata-swift-iq3_s.json",
+   "size": 1606,
+   "sha256": "07c858de99b3fddfe5e9cdbc1befc074f034642814e8e2f0a579499d3d1ad807"
+  },
+  "strata-swift-iq3_s.shared-settings.json": {
+   "path": "C:\\dev\\Strata\\strata-swift-iq3_s.shared-settings.json",
+   "size": 35,
+   "sha256": "d9801db3ff4f063b5df3b3709bf7d027e5588b6f1a4fd75617708b423fd7602c"
+  },
+  "strata-swift-iq3_s_2gpu.json": {
+   "path": "C:\\dev\\Strata\\strata-swift-iq3_s_2gpu.json",
+   "size": 1508,
+   "sha256": "e0049b67da23761e93002570216199f77b564b285556eb512f44cd5654cf1028"
+  }
+ },
+ "model_files": {
+  "dir": "C:\\dev\\Strata-data",
+  "present": true,
+  "folders": {
+   "models": {
+    "bytes": 84651280640,
+    "files": {
+     "mmproj-Swift-Qwen3.8-Flash-Next-BF16.gguf": {
+      "size": 907543520
+     },
+     "swift-IQ3_S/Swift-Qwen3.8-Flash-Next-GSQ-RCO-IQ3_S-00001-of-00002.gguf": {
+      "size": 44900816736
+     },
+     "swift-IQ3_S/Swift-Qwen3.8-Flash-Next-GSQ-RCO-IQ3_S-00002-of-00002.gguf": {
+      "size": 38842920384
+     }
+    }
+   },
+   "packs": {
+    "bytes": 72651096520,
+    "files": {
+     "coder-iq1_m/conversions.json": {
+      "size": 322
+     },
+     "coder-iq1_m/dense.bin": {
+      "size": 1475120640
+     },
+     "coder-iq1_m/experts.bin": {
+      "size": 25146163200
+     },
+     "coder-iq1_m/experts.bin.src.json": {
+      "size": 388
+     },
+     "coder-iq1_m/index.txt": {
+      "size": 93633
+     },
+     "coder-iq1_m/native_experts.txt": {
+      "size": 3269
+     },
+     "coder-iq1_m/tokenizer/chat_template.jinja": {
+      "size": 9993
+     },
+     "coder-iq1_m/tokenizer/merges.txt": {
+      "size": 3600844
+     },
+     "coder-iq1_m/tokenizer/token_type.json": {
+      "size": 744960
+     },
+     "coder-iq1_m/tokenizer/tokenizer.json": {
+      "size": 554
+     },
+     "coder-iq1_m/tokenizer/vocab.json": {
+      "size": 5737005
+     },
+     "qwen36-ud-q4_k_xl/tokenizer/chat_template.jinja": {
+      "size": 8057
+     },
+     "qwen36-ud-q4_k_xl/tokenizer/merges.txt": {
+      "size": 3600844
+     },
+     "qwen36-ud-q4_k_xl/tokenizer/token_type.json": {
+      "size": 744960
+     },
+     "qwen36-ud-q4_k_xl/tokenizer/tokenizer.json": {
+      "size": 554
+     },
+     "qwen36-ud-q4_k_xl/tokenizer/vocab.json": {
+      "size": 5737005
+     },
+     "swift-iq3_s/conversions.json": {
+      "size": 36604
+     },
+     "swift-iq3_s/dense.bin": {
+      "size": 1538035200
+     },
+     "swift-iq3_s/index.txt": {
+      "size": 93691
+     },
+     "swift-iq3_s/native_experts.txt": {
+      "size": 5370
+     },
+     "swift-iq3_s/tokenizer/chat_template.jinja": {
+      "size": 8952
+     },
+     "swift-iq3_s/tokenizer/merges.txt": {
+      "size": 3600844
+     },
+     "swift-iq3_s/tokenizer/token_type.json": {
+      "size": 744960
+     },
+     "swift-iq3_s/tokenizer/tokenizer.json": {
+      "size": 554
+     },
+     "swift-iq3_s/tokenizer/vocab.json": {
+      "size": 5737005
+     },
+     "swift-iq3_xxs/conversions.json": {
+      "size": 36800
+     },
+     "swift-iq3_xxs/dense.bin": {
+      "size": 1538035200
+     },
+     "swift-iq3_xxs/experts.bin": {
+      "size": 42912972800
+     },
+     "swift-iq3_xxs/experts.bin.src.json": {
+      "size": 404
+     },
+     "swift-iq3_xxs/index.txt": {
+      "size": 93693
+     },
+     "swift-iq3_xxs/native_experts.txt": {
+      "size": 5489
+     },
+     "swift-iq3_xxs/tokenizer/chat_template.jinja": {
+      "size": 8952
+     },
+     "swift-iq3_xxs/tokenizer/ginja_chat_template.jinja": {
+      "size": 30411
+     },
+     "swift-iq3_xxs/tokenizer/merges.txt": {
+      "size": 3600844
+     },
+     "swift-iq3_xxs/tokenizer/token_type.json": {
+      "size": 744960
+     },
+     "swift-iq3_xxs/tokenizer/tokenizer.json": {
+      "size": 554
+     },
+     "swift-iq3_xxs/tokenizer/vocab.json": {
+      "size": 5737005
+     }
+    }
+   },
+   "mtp": {
+    "bytes": 6927665103,
+    "files": {
+     "mtp-inventory.json": {
+      "size": 7884
+     },
+     "mtp-inventory.md": {
+      "size": 2474
+     },
+     "mtp-manifest.json": {
+      "size": 12102
+     },
+     "mtp-q2_0.gguf": {
+      "size": 889017216
+     },
+     "mtp-q2_0.gguf.report.json": {
+      "size": 3753
+     },
+     "rt/dense.bin": {
+      "size": 116099072
+     },
+     "rt/dense.txt": {
+      "size": 1880
+     },
+     "rt/draft_vocab.bin": {
+      "size": 425196
+     },
+     "rt/experts.bin": {
+      "size": 707788800
+     },
+     "tensors/mtp.fc_embedding.weight.bin": {
+      "size": 13107200
+     },
+     "tensors/mtp.fc_hidden.weight.bin": {
+      "size": 13107200
+     },
+     "tensors/mtp.hyper_connection_mixer.hc_norm.weight.bin": {
+      "size": 20480
+     },
+     "tensors/mtp.hyper_connection_mixer.input_mix_weight_down.weight.bin": {
+      "size": 6553600
+     },
+     "tensors/mtp.hyper_connection_mixer.input_mix_weight_up.weight.bin": {
+      "size": 6553600
+     },
+     "tensors/mtp.layers.0.attn_hyper_connection.block_inject_weight.weight.bin": {
+      "size": 81920
+     },
+     "tensors/mtp.layers.0.attn_hyper_connection.hc_norm.weight.bin": {
+      "size": 20480
+     },
+     "tensors/mtp.layers.0.attn_hyper_connection.input_mix_weight_down.weight.bin": {
+      "size": 6553600
+     },
+     "tensors/mtp.layers.0.attn_hyper_connection.input_mix_weight_up.weight.bin": {
+      "size": 6553600
+     },
+     "tensors/mtp.layers.0.mlp.experts.down_proj.bin": {
+      "size": 1677721600
+     },
+     "tensors/mtp.layers.0.mlp.experts.gate_up_proj.bin": {
+      "size": 3355443200
+     },
+     "tensors/mtp.layers.0.mlp.gate.weight.bin": {
+      "size": 2621440
+     },
+     "tensors/mtp.layers.0.mlp.shared_expert.down_proj.weight.bin": {
+      "size": 3276800
+     },
+     "tensors/mtp.layers.0.mlp.shared_expert.gate_proj.weight.bin": {
+      "size": 3276800
+     },
+     "tensors/mtp.layers.0.mlp.shared_expert.up_proj.weight.bin": {
+      "size": 3276800
+     },
+     "tensors/mtp.layers.0.mlp.shared_expert_gate.weight.bin": {
+      "size": 5120
+     },
+     "tensors/mtp.layers.0.mlp_hyper_connection.block_inject_weight.weight.bin": {
+      "size": 81920
+     },
+     "tensors/mtp.layers.0.mlp_hyper_connection.hc_norm.weight.bin": {
+      "size": 20480
+     },
+     "tensors/mtp.layers.0.mlp_hyper_connection.input_mix_weight_down.weight.bin": {
+      "size": 6553600
+     },
+     "tensors/mtp.layers.0.mlp_hyper_connection.input_mix_weight_up.weight.bin": {
+      "size": 6553600
+     },
+     "tensors/mtp.layers.0.self_attn.indexer.index_qk_proj.weight.bin": {
+      "size": 3276800
+     },
+     "tensors/mtp.layers.0.self_attn.indexer.k_layernorm.weight.bin": {
+      "size": 256
+     },
+     "tensors/mtp.layers.0.self_attn.indexer.q_layernorm.weight.bin": {
+      "size": 256
+     },
+     "tensors/mtp.layers.0.self_attn.k_norm.weight.bin": {
+      "size": 512
+     },
+     "tensors/mtp.layers.0.self_attn.k_proj.weight.bin": {
+      "size": 2621440
+     },
+     "tensors/mtp.layers.0.self_attn.o_proj.weight.bin": {
+      "size": 31457280
+     },
+     "tensors/mtp.layers.0.self_attn.q_norm.weight.bin": {
+      "size": 512
+     },
+     "tensors/mtp.layers.0.self_attn.q_proj.weight.bin": {
+      "size": 62914560
+     },
+     "tensors/mtp.layers.0.self_attn.v_proj.weight.bin": {
+      "size": 2621440
+     },
+     "tensors/mtp.pre_fc_norm_embedding.weight.bin": {
+      "size": 5120
+     },
+     "tensors/mtp.pre_fc_norm_hidden.weight.bin": {
+      "size": 20480
+     },
+     "tensors/verified.json": {
+      "size": 5030
+     }
+    }
+   }
+  }
+ }
+}

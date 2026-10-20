@@ -8,6 +8,17 @@ title Strata - update
 cd /d "%~dp0"
 rem All of it in one block: cmd reads a .bat file while it runs it, and the git pull can change this very file.
 (
+  rem A frozen copy (see freeze\FREEZE.md) stays on one version, so it must not fetch code from anywhere. The
+  rem pull below would move it to whatever upstream ships; the update of a frozen copy touches only this
+  rem version's engine, packages and settings.
+  if exist "freeze\FREEZE.md" (
+    echo  This copy of Strata is frozen: freeze\FREEZE.md says which version it is kept at, and the engine and
+    echo  packages are pinned to that release. Nothing is fetched from git. Checking this version's engine,
+    echo  packages and settings ...
+    call "%~dp0START-HERE.bat" --update %*
+    if not errorlevel 1 pause
+    exit /b
+  )
   if exist ".git" (
     where git >nul 2>nul || (
       echo  This folder is a git clone, but git is not on PATH: install Git for Windows ^(winget install Git.Git^)

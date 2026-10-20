@@ -233,6 +233,7 @@ class Engine(unittest.TestCase):
 
         with mock.patch.object(setup.urllib.request, "urlopen", urlopen), \
                 mock.patch.object(setup, "download", self.fake_download(got, wrote)), \
+                mock.patch.object(setup, "pinned_engine_digest", lambda asset, base: None), \
                 mock.patch.object(setup, "engine_digest", self.fake_digest(wrote)):
             eng, out = quiet(setup.get_prebuilt, setup.PREBUILT_URL, {"arch": 89}, "gpu")
         return eng, out, heads, got
@@ -272,6 +273,7 @@ class Engine(unittest.TestCase):
 
                 with mock.patch.object(setup.urllib.request, "urlopen", lambda req, timeout=None: Response()), \
                         mock.patch.object(setup, "download", download), \
+                        mock.patch.object(setup, "pinned_engine_digest", lambda asset, base: None), \
                         mock.patch.object(setup, "engine_digest", self.fake_digest(wrote)):
                     eng, _ = quiet(setup.get_prebuilt, setup.PREBUILT_URL, {"arch": 89}, "gpu")
                 self.assertIsNone(eng)

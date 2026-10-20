@@ -74,6 +74,11 @@ The full list: [docs/INSTALL.md](docs/INSTALL.md#what-you-need).
 
 ## Install
 
+> **This copy is frozen at Strata 0.1.45.** The engine is downloaded from the v0.1.45 release and checked against a
+> SHA-256 written into `setup.py`, no check asks which release is newest, and `UPDATE.bat` here does not pull code.
+> Upstream has moved on to 0.2.x; this copy will not pick that up. [freeze/FREEZE.md](freeze/FREEZE.md) explains it,
+> and `python freeze/verify_freeze.py` shows you, line by line, that nothing has drifted.
+
 ### Let your AI set it up
 
 Do you use an AI coding assistant (Claude Code, Cursor, Codex, GitHub Copilot, ...)? Paste this into it:
