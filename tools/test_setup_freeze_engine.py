@@ -19,7 +19,9 @@ from unittest import mock
 import setup
 
 URL = setup.PREBUILT_URL
+REPO = URL.split("//github.com/")[1].split("/releases")[0]   # the release the download is pointed at
 TAG = setup.release_of(URL)[1]
+KEY = REPO, TAG
 ASSETS = {setup.PREBUILT_ASSET, setup.CUDA12_ASSET,
           setup.WIN_HIP_ASSET if setup.WIN else None} - {None}
 
@@ -41,7 +43,7 @@ def an_archive(folder, arch=89):
 def pin_for(z):
     """PINNED_ENGINE_SHA256-shaped entries for the archives these tests make, keyed as setup.py keys them."""
     data = z.read_bytes()
-    return {(TAG, setup.PREBUILT_ASSET): (len(data), hashlib.sha256(data).hexdigest())}
+    return {KEY + (setup.PREBUILT_ASSET,): (len(data), hashlib.sha256(data).hexdigest())}
 
 
 def verify(z, pin, pinned=()):
@@ -64,24 +66,34 @@ class TheEngineUrlNamesOneRelease(unittest.TestCase):
         self.assertNotIn("latest", URL)
 
     def test_it_names_the_version_in_this_source(self):
-        # A freeze of this checkout names the release this version was published from.
-        self.assertEqual(URL, "https://github.com/Niko1221/Strata/releases/download/v"
-                              + setup.source_version() + "/")
+        # A freeze of this checkout names the release of this version, in this repository's own releases.
+        self.assertEqual(URL, setup.PREBUILT_TAG_URL.format(version=setup.source_version()))
+        self.assertEqual(setup.release_of(URL)[1], setup.source_version())
 
     def test_every_engine_we_can_download_has_a_hash(self):
         self.assertEqual(TAG, setup.source_version())
-        self.assertEqual({tag for tag, _ in setup.PINNED_ENGINE_SHA256}, {TAG})
-        self.assertEqual({asset for _, asset in setup.PINNED_ENGINE_SHA256}, ASSETS)
+        self.assertEqual({tag for _, tag, _ in setup.PINNED_ENGINE_SHA256}, {TAG})
+        self.assertEqual({asset for _, _, asset in setup.PINNED_ENGINE_SHA256}, ASSETS)
         self.assertIn(setup.PREBUILT_ASSET, ASSETS)
-        for asset, (size, sha) in setup.PINNED_ENGINE_SHA256.items():
-            self.assertGreater(size, 1_000_000, asset)
-            self.assertRegex(sha, r"^[0-9a-f]{64}$", asset)
+        # every repository the download is pointed at, and upstream's, which publishes the same bytes
+        self.assertEqual({repo for repo, _, _ in setup.PINNED_ENGINE_SHA256}, {REPO, setup.REPO})
+        for key, (size, sha) in setup.PINNED_ENGINE_SHA256.items():
+            self.assertGreater(size, 1_000_000, key)
+            self.assertRegex(sha, r"^[0-9a-f]{64}$", key)
+
+    def test_the_same_tag_at_another_repository_is_not_answered_with_these_bytes(self):
+        # The pinned hash says what *this project's* 0.1.45 engine is. Somebody else's release with the same tag
+        # carries their build, so nothing here speaks for it and setup asks them, as it always did.
+        self.assertIsNone(setup.pinned_engine_digest(setup.PREBUILT_ASSET,
+                        "https://github.com/someone-else/AwesomeEngine/releases/download/v" + TAG + "/"))
+        self.assertIsNotNone(setup.pinned_engine_digest(setup.PREBUILT_ASSET,
+                        "https://github.com/" + setup.REPO + "/releases/download/v" + TAG + "/"))
 
 
 class ThePinnedHashIsUsedOnlyWhereItIsTrue(unittest.TestCase):
     def test_a_URL_that_names_a_release_we_pinned_answers_with_its_hash(self):
         self.assertEqual(setup.pinned_engine_digest(setup.PREBUILT_ASSET, URL),
-                         setup.PINNED_ENGINE_SHA256[(TAG, setup.PREBUILT_ASSET)])
+                         setup.PINNED_ENGINE_SHA256[KEY + (setup.PREBUILT_ASSET,)])
 
     def test_everything_else_answers_with_nothing(self):
         # A newer release of the same repo, a fork's releases, the moving target, a local folder, a plain
@@ -125,7 +137,7 @@ class AOfflineMachineCanStillVerifyAnEngine(unittest.TestCase):
             self.assertIn("wrong SHA-256", str(got.exception))
             self.assertFalse(same.exists())
             with self.assertRaises(setup.UnverifiedEngine) as got:
-                verify(z, {(TAG, setup.PREBUILT_ASSET): (z.stat().st_size + 1, pin[(TAG, setup.PREBUILT_ASSET)][1])})
+                verify(z, {KEY + (setup.PREBUILT_ASSET,): (z.stat().st_size + 1, pin[KEY + (setup.PREBUILT_ASSET,)][1])})
             self.assertIn("not the published", str(got.exception))
 
     def test_with_neither_the_network_nor_a_hash_it_warns_rather_than_refusing(self):

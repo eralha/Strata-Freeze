@@ -1,15 +1,15 @@
 {
- "captured_at": "2026-10-20T07:38:12.804251+00:00",
+ "captured_at": "2026-10-20T08:33:00.287894+00:00",
  "frozen_version": "0.1.45",
- "frozen_tag": "v0.1.45",
+ "frozen_tag": "freeze-0.1.45",
  "upstream_repo": "Niko1221/Strata",
  "git": {
-  "head": "25c3cfad95e44ee6e419b2730a2f99e3dbfe40c7",
-  "describe": "v0.1.45-4-g25c3cfad-dirty",
-  "tag_commit": "477ac13cbe8e582c20484871ce459d20d82df09d",
-  "commits_after_tag": "4",
-  "branch": "token_counter",
-  "remotes": "origin\thttps://github.com/Niko1221/Strata.git (fetch)\norigin\thttps://github.com/Niko1221/Strata.git (push)",
+  "head": "0db76056e207d8214db364cacb6ad3637b565bf7",
+  "describe": "freeze-0.1.45-1-g0db76056-dirty",
+  "tag_commit": "8606327b066357dbfede9e01b353cd8d10dc08c9",
+  "commits_after_tag": "1",
+  "branch": "frozen",
+  "remotes": "origin\thttps://github.com/eralha/Strata-Freeze.git (fetch)\norigin\thttps://github.com/eralha/Strata-Freeze.git (push)\nupstream\thttps://github.com/Niko1221/Strata.git (fetch)\nupstream\thttps://github.com/Niko1221/Strata.git (push)",
   "clean": false
  },
  "machine": {
@@ -19,9 +19,9 @@
   "python_exe": "C:\\dev\\Strata\\.venv\\Scripts\\python.exe"
  },
  "setup_constants": {
-  "setup_py_sha256": "82396d16df6a268ba6504478d5f584c6a2609ae77e833ab787e5ea26141736d6",
-  "PREBUILT_URL": "https://github.com/Niko1221/Strata/releases/download/v0.1.45/",
-  "PREBUILT_TAG_URL": "https://github.com/Niko1221/Strata/releases/download/v{version}/",
+  "setup_py_sha256": "7191a9f0e919c168e47e91b2c8a9c30d6589489861e21746c28393ac6aef0e45",
+  "PREBUILT_URL": "https://github.com/eralha/Strata-Freeze/releases/download/v0.1.45/",
+  "PREBUILT_TAG_URL": "https://github.com/eralha/Strata-Freeze/releases/download/v{version}/",
   "REPO": "Niko1221/Strata",
   "PREBUILT_ASSET": "strata-windows-x64.zip",
   "CUDA12_ASSET": "strata-windows-x64-cuda12.zip",
@@ -48,15 +48,27 @@
    "unsloth/Qwen3.6-35B-A3B-MTP-GGUF": "5bc3e238d916f48a861bac2f8a1990a0e9b7e98d"
   },
   "PINNED_ENGINE_SHA256": {
-   "0.1.45|strata-windows-x64.zip": [
+   "eralha/Strata-Freeze|0.1.45|strata-windows-x64.zip": [
     165243142,
     "a1d4cafb8319c253f3010ff118dbd5ed07c232056b939ac7735819559f3b859e"
    ],
-   "0.1.45|strata-windows-x64-cuda12.zip": [
+   "eralha/Strata-Freeze|0.1.45|strata-windows-x64-cuda12.zip": [
     242782835,
     "19c1677fbefac9370d1f9556bacbd9b2e2b5d2661e0d8568e0e3e47a07641574"
    ],
-   "0.1.45|strata-windows-x64-hip.zip": [
+   "eralha/Strata-Freeze|0.1.45|strata-windows-x64-hip.zip": [
+    643211025,
+    "75a2ff9c71a48b4c4c54f6e37a42543c0d6ff11f109360d5e6fedd7733db53a9"
+   ],
+   "Niko1221/Strata|0.1.45|strata-windows-x64.zip": [
+    165243142,
+    "a1d4cafb8319c253f3010ff118dbd5ed07c232056b939ac7735819559f3b859e"
+   ],
+   "Niko1221/Strata|0.1.45|strata-windows-x64-cuda12.zip": [
+    242782835,
+    "19c1677fbefac9370d1f9556bacbd9b2e2b5d2661e0d8568e0e3e47a07641574"
+   ],
+   "Niko1221/Strata|0.1.45|strata-windows-x64-hip.zip": [
     643211025,
     "75a2ff9c71a48b4c4c54f6e37a42543c0d6ff11f109360d5e6fedd7733db53a9"
    ]

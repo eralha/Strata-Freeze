@@ -74,6 +74,13 @@ The full list: [docs/INSTALL.md](docs/INSTALL.md#what-you-need).
 
 ## Install
 
+> **This copy is frozen at Strata 0.1.45**, and its engine comes from **this repository's own release**: tag
+> `v0.1.45`, asset `strata-windows-x64.zip`, 165 243 142 bytes, SHA-256 `a1d4cafb8319c253f3010ff118dbd5ed07c232056b939ac7735819559f3b859e`,
+> pinned in `setup.py` and checked before the archive is unpacked. `UPDATE.bat` here does not pull code. Upstream
+> moved to 0.2.x and renamed its release assets, so a clone of *upstream* on a new machine 404s on this asset name
+> and starts compiling the engine; this copy does not. [freeze/FREEZE.md](freeze/FREEZE.md) explains it, and
+> `python freeze/verify_freeze.py` shows line by line that nothing has drifted.
+
 > **This copy is frozen at Strata 0.1.45.** The engine is downloaded from the v0.1.45 release and checked against a
 > SHA-256 written into `setup.py`, no check asks which release is newest, and `UPDATE.bat` here does not pull code.
 > Upstream has moved on to 0.2.x; this copy will not pick that up. [freeze/FREEZE.md](freeze/FREEZE.md) explains it,

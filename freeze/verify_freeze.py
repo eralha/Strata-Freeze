@@ -77,11 +77,11 @@ def check_pins(rep: Report, frozen: dict, setup) -> None:
     rep.equal("llama.cpp commit", setup.LLAMA_CPP_COMMIT, want["LLAMA_CPP_COMMIT"])
     rep.equal("HF revisions", setup.HF_REVISIONS, want["HF_REVISIONS"])
     tag = frozen["frozen_version"]
-    rep.truthy("engine hash pinned for this release",
-               (tag, want["PREBUILT_ASSET"]) in setup.PINNED_ENGINE_SHA256,
-               f"{tag} / {want['PREBUILT_ASSET']}")
+    repo = setup.PREBUILT_URL.split("//github.com/")[1].split("/releases")[0]
+    rep.truthy("engine hash pinned for this release", (repo, tag, want["PREBUILT_ASSET"]) in setup.PINNED_ENGINE_SHA256,
+               f"{repo} / {tag} / {want['PREBUILT_ASSET']}")
     rep.equal("pinned engine hashes",
-              {t + "|" + a: [int(s), h] for (t, a), (s, h) in setup.PINNED_ENGINE_SHA256.items()},
+              {r + "|" + t + "|" + a: [int(s), h] for (r, t, a), (s, h) in setup.PINNED_ENGINE_SHA256.items()},
               want["PINNED_ENGINE_SHA256"])
     rep.equal("setup.py untouched since the freeze", sha256(ROOT / "setup.py"),
               want["setup_py_sha256"])
@@ -138,12 +138,18 @@ PINNED_CACHE: dict = {}
 
 
 def setup_pinned(asset: str) -> tuple[int, str]:
-    """The (size, sha256) pinned in setup.py for the frozen release's `asset`, (0, "") when it pins nothing."""
+    """The (size, sha256) pinned in setup.py for the frozen release's `asset`, (0, "") when it pins nothing.
+
+    setup.py keys the hash by repository, tag and asset, because a hash says what *this project's* bytes are. The
+    mirror archive is a published asset of the repository `PREBUILT_URL` names, so that is the entry used here.
+    """
     if not PINNED_CACHE:
         setup = load_setup()
         tag = setup.source_version()
-        for (t, a), v in setup.PINNED_ENGINE_SHA256.items():
-            PINNED_CACHE[(t, a)] = (int(v[0]), v[1])
+        repo = setup.PREBUILT_URL.split("//github.com/")[1].split("/releases")[0]
+        for (r, t, a), v in setup.PINNED_ENGINE_SHA256.items():
+            if r == repo:
+                PINNED_CACHE[(t, a)] = (int(v[0]), v[1])
         PINNED_CACHE["tag"] = tag
     tag = PINNED_CACHE["tag"]
     return PINNED_CACHE.get((tag, asset), (0, ""))

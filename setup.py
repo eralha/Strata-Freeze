@@ -172,29 +172,39 @@ LLAMA_CPP_ZIP = f"https://github.com/ggml-org/llama.cpp/archive/{LLAMA_CPP_COMMI
 # "https://github.com/<you>/Strata/releases/latest/download/" (or pass --prebuilt / set STRATA_PREBUILT_URL).
 # With the default, the release of this checkout's own version (PREBUILT_TAG_URL, CMakeLists.txt's version) is
 # tried first and the latest release is the fallback (#214): an older checkout keeps the engine it shipped with.
-# FREEZE (0.1.45): pinned to this version's own release, so the "latest" fallback is never a path.  Upstream's
+# FREEZE (0.1.45): pinned to one frozen release, so the "latest" fallback is never a path.  Upstream's
 # v0.2.0-beta (2026-10-19) publishes strata-engine-*.tar.gz / Strata-*.AppImage / Strata-*-windows-*.exe and no
 # strata-windows-x64.zip, so pointing at "latest" would 404 here and setup would fall back to compiling.  An
 # un-pinned checkout of upstream main is what you want on a moving install; this one is a freeze.  A clone with
 # the engine already in engine/ never downloads at all (MIN_ENGINE is met), so this only matters for a fresh one.
 # Keep "--prebuilt <local folder>" (STRATA_PREBUILT_URL) as the offline way in: freeze/FREEZE.md has the command.
-PREBUILT_URL = "https://github.com/Niko1221/Strata/releases/download/v0.1.45/"
-# The engine archives of this release, pinned by release tag and asset name, with their size and SHA-256 (read from
-# GitHub's releases API on 2026-10-20, and confirmed by hashing the downloaded strata-windows-x64.zip here).
-# `verify_engine_archive` prefers these over asking the API, so a frozen checkout is checked against bytes chosen on
-# purpose rather than against whatever a network happens to say that day; a tag that is not listed keeps the old
-# behaviour (ask the API, and no answer warns and installs).  The release carries Windows assets only - a Linux
-# install of this version compiles the engine (docs/INSTALL.md), so there is nothing to pin there.
+# The archive is published as a release asset of THIS repository (eralha/Strata-Freeze, tag v0.1.45, uploaded
+# 2026-10-20 from the file downloaded from upstream's v0.1.45), so the download stays inside the frozen copy.
+PREBUILT_URL = "https://github.com/eralha/Strata-Freeze/releases/download/v0.1.45/"
+# The engine archives of this release, pinned by repository, release tag and asset name, with their size and
+# SHA-256 (read from GitHub's releases API on 2026-10-20, and confirmed by hashing the downloaded
+# strata-windows-x64.zip here).  `verify_engine_archive` prefers these over asking the API, so a frozen checkout
+# is checked against bytes chosen on purpose rather than against whatever a network happens to say that day; a
+# release that is not listed keeps the old behaviour (ask the API, and no answer warns and installs).  The
+# repository is part of the key because the hash says what *this project's* bytes are: a fork that ships its own
+# 0.1.45 engine ships different bytes, and a refusal with the expected hash named is the right answer there.
+# Both entries are the same bytes - the asset uploaded to eralha/Strata-Freeze on 2026-10-20 hashes
+# a1d4cafb..., the same as upstream's, as GitHub's own asset digest for the copy confirms.  The release carries
+# Windows assets only - a Linux install of this version compiles the engine (docs/INSTALL.md), so there is
+# nothing to pin there.
 PINNED_ENGINE_SHA256 = {
-    ("0.1.45", "strata-windows-x64.zip"): (165243142, "a1d4cafb8319c253f3010ff118dbd5ed07c232056b939ac7735819559f3b859e"),
-    ("0.1.45", "strata-windows-x64-cuda12.zip"): (242782835, "19c1677fbefac9370d1f9556bacbd9b2e2b5d2661e0d8568e0e3e47a07641574"),
-    ("0.1.45", "strata-windows-x64-hip.zip"): (643211025, "75a2ff9c71a48b4c4c54f6e37a42543c0d6ff11f109360d5e6fedd7733db53a9"),
+    ("eralha/Strata-Freeze", "0.1.45", "strata-windows-x64.zip"): (165243142, "a1d4cafb8319c253f3010ff118dbd5ed07c232056b939ac7735819559f3b859e"),
+    ("eralha/Strata-Freeze", "0.1.45", "strata-windows-x64-cuda12.zip"): (242782835, "19c1677fbefac9370d1f9556bacbd9b2e2b5d2661e0d8568e0e3e47a07641574"),
+    ("eralha/Strata-Freeze", "0.1.45", "strata-windows-x64-hip.zip"): (643211025, "75a2ff9c71a48b4c4c54f6e37a42543c0d6ff11f109360d5e6fedd7733db53a9"),
+    ("Niko1221/Strata", "0.1.45", "strata-windows-x64.zip"): (165243142, "a1d4cafb8319c253f3010ff118dbd5ed07c232056b939ac7735819559f3b859e"),
+    ("Niko1221/Strata", "0.1.45", "strata-windows-x64-cuda12.zip"): (242782835, "19c1677fbefac9370d1f9556bacbd9b2e2b5d2661e0d8568e0e3e47a07641574"),
+    ("Niko1221/Strata", "0.1.45", "strata-windows-x64-hip.zip"): (643211025, "75a2ff9c71a48b4c4c54f6e37a42543c0d6ff11f109360d5e6fedd7733db53a9"),
 }
 # The repository the release assets and their SHA-256 come from; `engine_digest` reads the API here even
 # when --prebuilt points the download somewhere else, because the hash is only worth having if it comes
 # from somewhere the download does not.
 REPO = "Niko1221/Strata"
-PREBUILT_TAG_URL = "https://github.com/Niko1221/Strata/releases/download/v{version}/"
+PREBUILT_TAG_URL = "https://github.com/eralha/Strata-Freeze/releases/download/v{version}/"
 PREBUILT_ASSET = "strata-windows-x64.zip" if WIN else "strata-linux-x64.zip"
 # the CUDA libraries the ready-made engine loads (the same CUDA 13.0 it is built with), from NVIDIA's pip packages
 CUDA_WHEELS = ["nvidia-cublas==13.0.2.14", "nvidia-cuda-runtime==13.0.96"]
@@ -3412,12 +3422,12 @@ def pinned_engine_digest(asset: str, base: str) -> tuple[int, str] | None:
 
     Only a URL that names its release is consulted, so a checkout that tracks upstream (the `latest` URL)
     keeps asking the API, as before: pinning the newest release of a moving install would be a lie the day a
-    release appears.  The size is part of the pair for the same reason `engine_digest` returns it.
+    release appears.  The repository is part of the key, so a fork that publishes its own build under the same
+    tag is not answered with these bytes; the size is part of the pair for the same reason `engine_digest`
+    returns it.
     """
-    where = release_of(base)
-    if where is None or not where[1]:               # a local folder, a plain mirror, or the "latest" URL
-        return None
-    entry = PINNED_ENGINE_SHA256.get((where[1], asset))
+    m = re.search(r"https?://(?:www\.)?github\.com/([^/]+/[^/]+)/releases/download/v([^/]+)/", base)
+    entry = PINNED_ENGINE_SHA256.get((m.group(1), m.group(2), asset)) if m else None
     return (int(entry[0]), entry[1]) if entry else None
 
 
@@ -3542,11 +3552,18 @@ def engine_refused(asset: str, e: Exception, updating: bool) -> None:
 
 def prebuilt_bases(url_base) -> list[str]:
     """Where to look for the ready-made engine, in order (each ending in a slash).  The default: the release of this
-    checkout's version first, then the latest (#214); an explicit --prebuilt / STRATA_PREBUILT_URL: only that."""
+    checkout's version first, then the latest (#214); an explicit --prebuilt / STRATA_PREBUILT_URL: only that.
+
+    A frozen copy adds upstream's release of the same version last: `PREBUILT_URL` names this repository's published
+    asset, and upstream published identical bytes under the same tag, so the download still has a source if this
+    repository's release is ever taken down.  A release that is not published at all 404s on its HEAD probe, so an
+    extra base costs one request and changes nothing on a machine that already has the engine installed.
+    """
     base = url_base if url_base.endswith(("/", "\\")) else url_base + "/"
     if base != PREBUILT_URL:
         return [base]
-    return [PREBUILT_TAG_URL.format(version=source_version()), base]
+    return [PREBUILT_TAG_URL.format(version=source_version()), base,
+            f"https://github.com/{REPO}/releases/download/v{source_version()}/"]
 
 
 PREVIOUS_ENGINE = ".previous"

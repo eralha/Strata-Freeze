@@ -79,8 +79,8 @@ def read_setup_constants() -> dict:
         "CUDA12_WHEELS": list(s.CUDA12_WHEELS),
         "LLAMA_CPP_COMMIT": s.LLAMA_CPP_COMMIT,
         "HF_REVISIONS": dict(s.HF_REVISIONS),
-        "PINNED_ENGINE_SHA256": {tag + "|" + asset: [int(size), hexa]
-                                 for (tag, asset), (size, hexa) in s.PINNED_ENGINE_SHA256.items()},
+        "PINNED_ENGINE_SHA256": {repo + "|" + tag + "|" + asset: [int(size), hexa]
+                                 for (repo, tag, asset), (size, hexa) in s.PINNED_ENGINE_SHA256.items()},
         "PY_PACKAGES": list(s.PY_PACKAGES),
         "requirements_sha256": sha256(ROOT / "requirements.txt"),
     }

@@ -239,16 +239,26 @@ class Engine(unittest.TestCase):
         return eng, out, heads, got
 
     def test_bases(self):
+        # This checkout's own version first, then the URL it ships with, then upstream's release of that version
+        # (a frozen copy publishes its own asset and keeps upstream as the last source for the same bytes).
         self.assertEqual(setup.prebuilt_bases(setup.PREBUILT_URL),
-                         ["https://github.com/Niko1221/Strata/releases/download/v0.1.31/", setup.PREBUILT_URL])
+                         [setup.PREBUILT_TAG_URL.format(version="0.1.31"), setup.PREBUILT_URL,
+                          "https://github.com/" + setup.REPO + "/releases/download/v0.1.31/"])
         self.assertEqual(setup.prebuilt_bases("https://mirror.example/x"), ["https://mirror.example/x/"])
 
     def test_the_checkout_s_release_first(self):
-        tag = "https://github.com/Niko1221/Strata/releases/download/v0.1.31/"
+        tag = setup.PREBUILT_TAG_URL.format(version="0.1.31")
         eng, out, heads, got = self.run_get([tag, setup.PREBUILT_URL])
         self.assertEqual(eng, self.root / "engine")
         self.assertEqual(got, [tag + setup.PREBUILT_ASSET])
         self.assertEqual(len(heads), 1)
+
+    def test_upstream_s_release_of_the_same_version_is_the_last_try(self):
+        tag = "https://github.com/" + setup.REPO + "/releases/download/v0.1.31/"
+        eng, out, heads, got = self.run_get([tag])
+        self.assertEqual(eng, self.root / "engine")
+        self.assertEqual(got, [tag + setup.PREBUILT_ASSET])
+        self.assertEqual(len(heads), 3)   # the two published-before-it bases 404 first
 
     def test_latest_when_it_is_not_published(self):
         eng, out, heads, got = self.run_get([setup.PREBUILT_URL])
