@@ -21,9 +21,8 @@ check the PC and driver, install `requirements.txt`, get the engine, download th
 |---|---|
 | Asset wanted (Windows) | `strata-windows-x64.zip` (CUDA 13) - and `-hip.zip`, `-cuda12.zip` for AMD and old cards |
 | This checkout's version | `project(strata VERSION 0.1.45)` in `CMakeLists.txt`, read by `source_version()` |
-| Engine release | tag **`v0.1.45` of this repository** (asset id 658712922, uploaded 2026-10-20 from the file downloaded from upstream's `v0.1.45`); GitHub's own digest of the asset is `sha256:a1d4cafb8319c253f3010ff118dbd5ed07c232056b939ac7735819559f3b859e`, the number pinned below |
+| Engine release | tag **`v0.1.45` of this repository** (asset id 658712922, uploaded 2026-10-20 from the file downloaded from upstream's `v0.1.45`): 165 243 142 bytes, and GitHub's own digest of the asset is `sha256:a1d4cafb8319c253f3010ff118dbd5ed07c232056b939ac7735819559f3b859e`, the number pinned below. Checked with an anonymous `HEAD`: `200`, `Content-Length: 165243142` |
 | Pinned to | `PREBUILT_URL = "https://github.com/eralha/Strata-Freeze/releases/download/v0.1.45/"` in `setup.py` |
-| The published archive | 165 243 142 bytes; GitHub's own asset digest is `sha256:a1d4cafb8319c253f3010ff118dbd5ed07c232056b939ac7735819559f3b859e`, the same number pinned in `setup.py` |
 | Hash pinned in the file | `PINNED_ENGINE_SHA256`, keyed by **repository, tag and asset** - so this file answers for this repository's release and for upstream's `v0.1.45` (identical bytes), and for nobody else's |
 | Fallback bases | `prebuilt_bases()` order: this repository's tag, `PREBUILT_URL`, then upstream's release of the same version. The CUDA 12 and HIP archives (242 782 835 and 643 211 025 bytes) are published upstream only, on purpose - this repository publishes the one asset this PC uses |
 | Local mirror | `..\Strata-engine-dist\strata-windows-x64.zip` - 165 243 142 bytes, over GitHub's 100 MB per-file git limit, so it is not in git |

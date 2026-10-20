@@ -1,13 +1,13 @@
 {
- "captured_at": "2026-10-20T08:33:00.287894+00:00",
+ "captured_at": "2026-10-20T08:35:19.139409+00:00",
  "frozen_version": "0.1.45",
  "frozen_tag": "freeze-0.1.45",
  "upstream_repo": "Niko1221/Strata",
  "git": {
-  "head": "0db76056e207d8214db364cacb6ad3637b565bf7",
-  "describe": "freeze-0.1.45-1-g0db76056-dirty",
+  "head": "ada9ba49a1f1634cf1c62c8654c940fc89ce5c68",
+  "describe": "freeze-0.1.45-2-gada9ba49-dirty",
   "tag_commit": "8606327b066357dbfede9e01b353cd8d10dc08c9",
-  "commits_after_tag": "1",
+  "commits_after_tag": "2",
   "branch": "frozen",
   "remotes": "origin\thttps://github.com/eralha/Strata-Freeze.git (fetch)\norigin\thttps://github.com/eralha/Strata-Freeze.git (push)\nupstream\thttps://github.com/Niko1221/Strata.git (fetch)\nupstream\thttps://github.com/Niko1221/Strata.git (push)",
   "clean": false
